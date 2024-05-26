@@ -12,6 +12,6 @@ grub_tweaks:
   - key: GRUB_TERMINAL_OUTPUT
     value: gfxterm
   - key: GRUB_GFXMODE
-    value: 1920x1080
+    value: "{{ grub_menu_resolution | default('1280×720') }}"
 
 ...
