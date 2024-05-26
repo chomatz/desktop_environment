@@ -7,5 +7,10 @@ gnome_packages:
   - gnome-extensions-app
   - gnome-themes-extra
   - gnome-tweaks
+grub_menu:
+  - key: GRUB_TERMINAL_OUTPUT
+    value: gfxterm
+  - key: GRUB_GFXMODE
+    value: 1920x1080
 
 ...
