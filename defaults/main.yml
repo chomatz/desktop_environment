@@ -1,13 +1,14 @@
 ---
 
-gnome_packages:
+gnome_groups:
   - "@base-x"
   - "@GNOME"
+gnome_packages:
   - dconf-editor
   - gnome-extensions-app
   - gnome-themes-extra
   - gnome-tweaks
-grub_menu:
+grub_tweaks:
   - key: GRUB_TERMINAL_OUTPUT
     value: gfxterm
   - key: GRUB_GFXMODE
