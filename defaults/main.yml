@@ -1,0 +1,11 @@
+---
+
+gnome_packages:
+  - "@base-x"
+  - "@GNOME"
+  - dconf-editor
+  - gnome-extensions-app
+  - gnome-themes-extra
+  - gnome-tweaks
+
+...
