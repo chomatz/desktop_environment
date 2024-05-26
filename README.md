@@ -4,6 +4,8 @@ ansible role for gnome deployment
 ## requirements
 
 ## variables
+- grub_menu_resolution: 1920x1080
+  - set to the desired resolution
 
 ## dependencies
 requires the following role(s):
