@@ -1,0 +1,38 @@
+---
+
+- name: ensure tasks run only on selected os releases
+  block:
+
+    - name: install gnome desktop
+      ansible.builtin.package:
+        name: "{{ gnome_groups }}"
+        state: present
+      register: gnome_desktop
+      failed_when:
+        - gnome_desktop is failed
+        - "'No group GNOME available' not in gnome_desktop.msg"
+
+    - name: display gnome desktop installation result
+      ansible.builtin.debug:
+        var: gnome_desktop
+        verbosity: 1
+
+    - name: install additional packages
+      ansible.builtin.package:
+        name: "{{ gnome.packages }}"
+        state: latest
+
+    - name: check default systemd target
+      ansible.builtin.command:
+        cmd: systemctl get-default
+      changed_when: false
+      register: systemd_target
+
+    - name: set systemd to boot the graphical.target
+      ansible.builtin.command:
+        cmd: "systemctl set-default graphical.target"
+      when: systemd_target.stdout != "graphical.target"
+
+  when: ansible_distribution == "Fedora"
+
+...
