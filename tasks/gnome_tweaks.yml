@@ -1,0 +1,51 @@
+---
+
+- name: ensure tasks run only on selected os releases
+  block:
+
+    - name: locate logind.conf
+      ansible.builtin.find:
+        paths:
+          - /etc/systemd
+          - /usr/lib/systemd
+        patterns: logind.conf
+      register: logind_location
+
+    - name: set logind.conf location
+      ansible.builtin.set_fact:
+        logind_path: "{{ logind_location.files | map(attribute='path') | join('')}}"
+
+    - name: display logind.conf location
+      ansible.builtin.debug:
+        var: logind_path
+        verbosity: 1
+
+    - name: prevent sleep when laptop lid is closed - on battery
+      ansible.builtin.lineinfile:
+        path: "{{ logind_path }}"
+        regexp: '^.*#HandleLidSwitch='
+        line: HandleLidSwitch=ignore
+
+    - name: prevent sleep when laptop lid is closed - on power
+      ansible.builtin.lineinfile:
+        path: "{{ logind_path }}"
+        regexp: '^.*#HandleLidSwitchExternalPower='
+        line: HandleLidSwitchExternalPower=ignore
+
+    - name: prevent sleep when laptop lid is closed - when docked
+      ansible.builtin.lineinfile:
+        path: "{{ logind_path }}"
+        regexp: '^.*#HandleLidSwitchDocked='
+        line: HandleLidSwitchDocked=ignore
+
+    - name: configure additional grub menu tweaks
+      ansible.builtin.include_role:
+        name: boot_loader
+        tasks_from: grub_settings.yml
+      vars:
+        grub_setting: "{{ grub_tweaks }}"
+        grub_task: configure
+
+  when: ansible_distribution == "Fedora"
+
+...
