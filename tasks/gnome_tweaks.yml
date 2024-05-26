@@ -43,7 +43,7 @@
         name: boot_loader
         tasks_from: grub_settings.yml
       vars:
-        grub_setting: "{{ grub_tweaks }}"
+        grub_settings: "{{ grub_tweaks }}"
         grub_task: configure
 
   when: ansible_distribution == "Fedora"
