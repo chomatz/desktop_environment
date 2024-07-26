@@ -3,40 +3,25 @@
 - name: ensure tasks run only on selected os releases
   block:
 
-    - name: locate logind.conf
-      ansible.builtin.find:
-        paths:
-          - /etc/systemd
-          - /usr/lib/systemd
-        patterns: logind.conf
-      register: logind_location
-
     - name: set logind.conf location
       ansible.builtin.set_fact:
-        logind_path: "{{ logind_location.files | map(attribute='path') | join('')}}"
+        logind_path: /etc/systemd/logind.conf
 
-    - name: display logind.conf location
-      ansible.builtin.debug:
-        var: logind_path
-        verbosity: 1
+    - name: copy logind.conf to /etc/systemd
+      ansible.builtin.copy:
+        src: /usr/lib/systemd/logind.conf
+        dest: "{{ logind_path }}"
+        remote_src: true
 
-    - name: prevent sleep when laptop lid is closed - on battery
+    - name: implement laptop sleep overrides post-login
       ansible.builtin.lineinfile:
         path: "{{ logind_path }}"
-        regexp: '^.*#HandleLidSwitch='
-        line: HandleLidSwitch=ignore
-
-    - name: prevent sleep when laptop lid is closed - on power
-      ansible.builtin.lineinfile:
-        path: "{{ logind_path }}"
-        regexp: '^.*#HandleLidSwitchExternalPower='
-        line: HandleLidSwitchExternalPower=ignore
-
-    - name: prevent sleep when laptop lid is closed - when docked
-      ansible.builtin.lineinfile:
-        path: "{{ logind_path }}"
-        regexp: '^.*#HandleLidSwitchDocked='
-        line: HandleLidSwitchDocked=ignore
+        regexp: '^.*#{{ item }}='
+        line: "{{ item }}=ignore"
+      loop:
+        - HandleLidSwitch
+        - HandleLidSwitchExternalPower
+        - HandleLidSwitchDocked
 
     - name: configure additional grub menu tweaks
       ansible.builtin.include_role:
