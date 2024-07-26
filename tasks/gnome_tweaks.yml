@@ -3,16 +3,6 @@
 - name: ensure tasks run only on selected os releases
   block:
 
-    - name: set logind.conf location
-      ansible.builtin.set_fact:
-        logind_path: /etc/systemd/logind.conf
-
-    - name: copy logind.conf to /etc/systemd
-      ansible.builtin.copy:
-        src: /usr/lib/systemd/logind.conf
-        dest: "{{ logind_path }}"
-        remote_src: true
-
     - name: implement laptop sleep overrides pre-login
       ansible.builtin.command:
         cmd: "sudo -u gdm dbus-launch gsettings set {{ item }}"
@@ -22,6 +12,16 @@
         - org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
         - org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
         - org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
+
+    - name: set logind.conf location
+      ansible.builtin.set_fact:
+        logind_path: /etc/systemd/logind.conf
+
+    - name: copy logind.conf to /etc/systemd
+      ansible.builtin.copy:
+        src: /usr/lib/systemd/logind.conf
+        dest: "{{ logind_path }}"
+        remote_src: true
 
     - name: implement laptop sleep overrides post-login
       ansible.builtin.lineinfile:
