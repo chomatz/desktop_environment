@@ -3,6 +3,11 @@
 - name: ensure tasks run only on selected os releases
   block:
 
+    - name: install dbus-x11
+      ansible.builtin.package:
+        name: dbus-x11
+        state: present
+
     - name: implement laptop sleep overrides pre-login
       ansible.builtin.command:
         cmd: "sudo -u gdm dbus-launch gsettings set {{ item }}"
