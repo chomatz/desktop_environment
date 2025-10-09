@@ -8,16 +8,6 @@
         name: dbus-x11
         state: present
 
-    - name: implement laptop sleep overrides pre-login
-      ansible.builtin.command:
-        cmd: "sudo -u gdm dbus-launch gsettings set {{ item }}"
-      loop:
-        - org.gnome.desktop.session idle-delay 0
-        - org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
-        - org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
-        - org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
-        - org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
-
     - name: set logind.conf location
       ansible.builtin.set_fact:
         logind_path: /etc/systemd/logind.conf
@@ -27,6 +17,16 @@
         src: /usr/lib/systemd/logind.conf
         dest: "{{ logind_path }}"
         remote_src: true
+
+    - name: implement laptop sleep overrides pre-login
+      ansible.builtin.command:
+        cmd: "sudo -u gdm dbus-launch gsettings set {{ item }}"
+      loop:
+        - org.gnome.desktop.session idle-delay 0
+        - org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
+        - org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+        - org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
+        - org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
 
     - name: implement laptop sleep overrides post-login
       ansible.builtin.lineinfile:
