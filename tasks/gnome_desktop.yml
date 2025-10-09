@@ -20,7 +20,7 @@
     - name: install additional packages
       ansible.builtin.package:
         name: "{{ gnome_packages }}"
-        state: latest
+        state: present
 
     - name: check default systemd target
       ansible.builtin.command:
