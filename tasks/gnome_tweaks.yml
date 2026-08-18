@@ -18,6 +18,7 @@
         dest: "{{ logind_path }}"
         remote_src: true
 
+    #check https://docs.ansible.com/projects/ansible/latest/collections/community/general/dconf_module.html
     - name: implement laptop sleep overrides pre-login
       ansible.builtin.command:
         cmd: "sudo -u gdm dbus-launch gsettings set {{ item }}"
