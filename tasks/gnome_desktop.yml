@@ -21,6 +21,13 @@
       ansible.builtin.package:
         name: "{{ gnome_packages }}"
         state: present
+      when: ansible_distribution_major_version | int <= 43
+
+    - name: install additional packages
+      ansible.builtin.package:
+        name: "{{ gnome_packages_50 }}"
+        state: present
+      when: ansible_distribution_major_version | int >= 44
 
     - name: check default systemd target
       ansible.builtin.command:
