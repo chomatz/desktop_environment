@@ -8,6 +8,10 @@ gnome_packages:
   - gnome-extensions-app
   - gnome-themes-extra
   - gnome-tweaks
+gnome_packages_50:
+  - dconf-editor
+  - gnome-extensions-app
+  - gnome-tweaks
 grub_tweaks:
   - key: GRUB_TERMINAL_OUTPUT
     value: gfxterm
