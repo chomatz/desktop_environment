@@ -28,6 +28,18 @@
         - org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
         - org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
         - org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
+      when: (ansible_distribution_major_version | int) <= 43
+
+    - name: implement pre-login sleep overrides
+      ansible.builtin.copy:
+        dest: /etc/dconf/db/local.d/10-power
+        content: |
+          [org/gnome/settings-daemon/plugins/power]
+          sleep-inactive-ac-timeout=0
+          sleep-inactive-ac-type='nothing'
+          sleep-inactive-battery-timeout=0
+          sleep-inactive-battery-type='nothing'
+      when: (ansible_distribution_major_version | int) >= 44
 
     - name: implement post-login sleep overrides
       ansible.builtin.lineinfile:
@@ -38,6 +50,19 @@
         - HandleLidSwitch
         - HandleLidSwitchExternalPower
         - HandleLidSwitchDocked
+
+    - name: implement post-login sleep overrides
+      ansible.builtin.copy:
+        dest: /etc/dconf/db/local.d/20-session
+        content: |
+          [org/gnome/desktop/session]
+          idle-delay=uint32 0
+      when: (ansible_distribution_major_version | int) >= 44
+
+    - name: apply sleep overrides
+      ansible.builtin.command:
+        cmd: dconf update
+      when: (ansible_distribution_major_version | int) >= 44
 
     - name: configure additional grub menu tweaks
       ansible.builtin.include_role:
